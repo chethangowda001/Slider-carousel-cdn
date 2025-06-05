@@ -78,7 +78,22 @@ function nextSlide() {
 }
 
 function prevSlide() {
-    showSlide(currentIndex - 1);
+    if (currentIndex === totalImages) {
+        // At first original slide, jump to last cloned slide without transition
+        currentIndex = totalImages * 2 - 1;
+        carousel.style.transition = 'none';
+        carousel.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+        
+        // Force reflow
+        carousel.offsetHeight;
+        
+        // Then smoothly go to previous slide
+        setTimeout(() => {
+            showSlide(currentIndex - 1);
+        }, 10);
+    } else {
+        showSlide(currentIndex - 1);
+    }
 }
 
 function startAutoPlay() {
