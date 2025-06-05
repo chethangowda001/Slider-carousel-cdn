@@ -32,6 +32,8 @@ originalImages.forEach(img => {
     imgElement.alt = img.alt;
     carousel.appendChild(imgElement);
 });
+ Ascending
+});
 originalImages.forEach(img => {
     const cloneFirst = document.createElement('img');
     cloneFirst.src = img.src;
@@ -107,10 +109,13 @@ prevButton.addEventListener('click', () => {
 });
 
 carousel.addEventListener('transitionend', () => {
+    // Handle forward loop (when reaching cloned images at the end)
     if (currentIndex >= allImages.length - totalImages) {
         showSlide(currentIndex % totalImages + totalImages, false);
-    } else if (currentIndex < totalImages) {
-        showSlide(currentIndex % totalImages + totalImages, false);
+    } 
+    // Handle backward loop (when reaching cloned images at the start)
+    else if (currentIndex < totalImages) {
+        showSlide(currentIndex + totalImages, false); // Changed to jump forward to the original last image
     }
     isTransitioning = false; // Ensure flag is reset
 });
