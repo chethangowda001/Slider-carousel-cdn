@@ -1,4 +1,4 @@
-if (!window.carouselConfig) {
+ if (!window.carouselConfig) {
             console.error('carouselConfig not defined. Please define carouselConfig before including this script.');
             window.carouselConfig = {
                 width: '600px',
@@ -85,18 +85,24 @@ if (!window.carouselConfig) {
             isTransitioning = true;
 
             if (currentIndex === totalImages) {
-                // When at the first original slide, jump to the last original slide without transition
-                carousel.style.transition = 'none';
+                // When at the first original slide, jump to the last original slide
                 currentIndex = totalImages * 2 - 1; // Last original slide index
+                carousel.style.transition = 'none';
                 carousel.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
 
                 // Force reflow to apply the no-transition change
                 carousel.offsetHeight;
 
-                // Now apply the transition to move to the correct position
+                // Smoothly transition to the previous slide
                 setTimeout(() => {
                     carousel.style.transition = `transform ${carouselConfig.transitionSpeed} ease-in-out`;
-                    showSlide(currentIndex - 1);
+                    currentIndex--;
+                    carousel.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+
+                    // Reset transitioning flag after transition
+                    setTimeout(() => {
+                        isTransitioning = false;
+                    }, parseFloat(carouselConfig.transitionSpeed) * 1000);
                 }, 0);
             } else {
                 showSlide(currentIndex - 1);
