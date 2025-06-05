@@ -37,7 +37,7 @@ originalImages.forEach(img => {
     cloneFirst.alt = img.alt;
     carousel.appendChild(cloneFirst);
 });
-originalImages.forEach(img => {
+originalImages.slice().reverse().forEach(img => {
     const cloneLast = document.createElement('img');
     cloneLast.src = img.src;
     cloneLast.alt = img.alt;
