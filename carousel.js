@@ -23,6 +23,7 @@ const prevButton = document.querySelector('.prev');
 const nextButton = document.querySelector('.next');
 let currentIndex = carouselConfig.images.length;
 let autoPlayInterval;
+let isTransitioning = false;
 
 const originalImages = carouselConfig.images;
 originalImages.forEach(img => {
@@ -49,14 +50,30 @@ const totalImages = originalImages.length;
 const slideWidth = parseFloat(carouselConfig.width);
 
 function showSlide(index, useTransition = true) {
-    currentIndex = index;
-    if (currentIndex >= allImages.length) {
-        currentIndex = (currentIndex % totalImages + totalImages) % totalImages + totalImages;
-    } else if (currentIndex < 0) {
-        currentIndex = (currentIndex % totalImages + totalImages) % totalImages + totalImages;
+    if (isTransitioning) return; // Prevent multiple transitions
+    isTransitioning = true;
+
+    // Normalize index
+    if (index >= allImages.length) {
+        currentIndex = index % totalImages + totalImages;
+    } else if (index < totalImages) {
+        currentIndex = (index % totalImages + totalImages) % totalImages + totalImages;
+    } else {
+        currentIndex = index;
     }
+
+    // Apply transform
     carousel.style.transition = useTransition ? `transform ${carouselConfig.transitionSpeed} ease-in-out` : 'none';
     carousel.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+
+    // Reset transitioning flag after transition completes
+    if (useTransition) {
+        setTimeout(() => {
+            isTransitioning = false;
+        }, parseFloat(carouselConfig.transitionSpeed) * 1000);
+    } else {
+        isTransitioning = false;
+    }
 }
 
 function nextSlide() {
@@ -93,8 +110,9 @@ carousel.addEventListener('transitionend', () => {
     if (currentIndex >= allImages.length - totalImages) {
         showSlide(currentIndex % totalImages + totalImages, false);
     } else if (currentIndex < totalImages) {
-        showSlide(currentIndex + totalImages, false);
+        showSlide(currentIndex % totalImages + totalImages, false);
     }
+    isTransitioning = false; // Ensure flag is reset
 });
 
 carousel.addEventListener('mouseenter', stopAutoPlay);
